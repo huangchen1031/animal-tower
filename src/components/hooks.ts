@@ -1,4 +1,3 @@
-import { ANIMAL_SHAPE, Animals } from '@/data/const';
 import { getShapeCellsPosition } from '@/utils';
 import { computed, onMounted, onUnmounted, ref, type Ref } from 'vue';
 
@@ -55,7 +54,7 @@ let offsetX = 0;
 let offsetY = 0;
 
 // 拖拽事件
-export const useDraggable = (dragArea: Ref<HTMLDivElement, HTMLDivElement>, shape: string[]) => {
+export const useDraggable = (dragArea: Ref<HTMLDivElement, HTMLDivElement>, shape: string[], name: string) => {
   // 是否拖拽中
   const isDragging = ref(false);
 
@@ -70,12 +69,14 @@ export const useDraggable = (dragArea: Ref<HTMLDivElement, HTMLDivElement>, shap
 
   const onDragStart = (event: DragEvent) => {
     event.dataTransfer!.effectAllowed = 'move';
+    event.dataTransfer!.setData('animal', name);
     isDragging.value = true;
 
     const { clientX, clientY } = event;
-    const { offsetTop, offsetLeft } = dragArea.value;
-    offsetX = clientX - offsetLeft;
-    offsetY = clientY - offsetTop;
+    const { top, left } = dragArea.value.getBoundingClientRect();
+    
+    offsetX = clientX - left;
+    offsetY = clientY - top;
   };
 
   const onDragEnd = () => {
@@ -86,6 +87,8 @@ export const useDraggable = (dragArea: Ref<HTMLDivElement, HTMLDivElement>, shap
     if (!isDragging.value) return;
 
     const { clientX, clientY } = event;
+    if (clientX === 0 && clientY === 0) return;
+
     left.value = clientX - offsetX;
     top.value = clientY - offsetY;
   };

@@ -1,4 +1,4 @@
-import type { Pos } from '@/data/types';
+import type { Pos, PosStyle } from '@/data/types';
 
 export const computeShape = (origin: string[]): number[][] => {
   const result: number[][] = [];
@@ -26,11 +26,11 @@ export const getCellPosition = (cell: string) => {
 };
 
 // 获取cell位置
-export const getCellLeftTop = (cell: string) => {
+export const getCellLeftTop = (cell: string, top: number = 0, left: number = 0): PosStyle => {
   const { x, y } = getCellPosition(cell);
   return {
-    left: `${y * BASE}px`,
-    top: `${x * BASE}px`,
+    left: `${y * BASE + left}px`,
+    top: `${x * BASE + top}px`,
   };
 };
 
@@ -43,21 +43,24 @@ export const getShapeWidthHeight = (cell: string) => {
   };
 };
 
+// 获取cell完整位置
+export const getCellFullPosition = (top: number = 0, left: number = 0, cell: string): Pos => {
+  const { x, y } = getCellPosition(cell);
+  return {
+    top: x * BASE + top,
+    left: y * BASE + left,
+    right: y * BASE + left + BASE,
+    bottom: x * BASE + top + BASE,
+  };
+};
+
 // 计算所有单元坐标
 export const getShapeCellsPosition = (
   top: number = 0,
   left: number = 0,
   shape: string[] = [],
 ): Pos[] => {
-  return shape?.map((cell) => {
-    const { x, y } = getCellPosition(cell);
-    return {
-      top: x * BASE + top,
-      left: y * BASE + left,
-      right: y * BASE + left + BASE,
-      bottom: x * BASE + top + BASE,
-    };
-  });
+  return shape?.map((cell) => getCellFullPosition(top, left, cell));
 };
 
 // 计算单元格交集
@@ -67,10 +70,11 @@ export const getCellOverlap = (origin: Pos[], target: Pos[]): number[] => {
   target.forEach((pos, index) => {
     origin.forEach((cell) => {
       if (
-        cell.top >= pos.top &&
-        cell.top <= pos.bottom &&
-        cell.left >= pos.left &&
-        cell.left <= pos.right
+        cell.top > pos.top &&
+        cell.top < pos.bottom &&
+        cell.left > pos.left &&
+        cell.left < pos.right &&
+        !res.includes(index)
       ) {
         res.push(index);
       }

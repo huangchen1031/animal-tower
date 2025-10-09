@@ -21,9 +21,10 @@ const style = computed(() => ({
 const dragArea = ref<HTMLDivElement>(document.createElement('div'));
 
 // 拖拽事件
-const { onDragStart, onDragEnd, onDrag, cellsPosition, isDragging, top, left } = useDraggable(
+const { onDragStart, onDragEnd, onDrag, cellsPosition, isDragging } = useDraggable(
   dragArea,
   shape,
+  name,
 );
 
 // 旋转参数
@@ -35,7 +36,7 @@ watch(cellsPosition, () => {
 </script>
 
 <template>
-  <div class="animal-wrap">
+  <div class="animal-box">
     <div
       ref="dragArea"
       :class="['animal', name]"
@@ -45,7 +46,7 @@ watch(cellsPosition, () => {
       @drag="onDrag"
       @dragend="onDragEnd"
     >
-      <div v-for="cell in shape" class="cell" :style="getCellLeftTop(cell)"></div>
+      <div v-for="cell in shape" class="cell" :key="cell" :style="getCellLeftTop(cell)"></div>
     </div>
   </div>
 </template>
@@ -55,9 +56,6 @@ watch(cellsPosition, () => {
   position: relative;
   cursor: grab;
 
-  &-wrap {
-    padding: 10px;
-  }
   &.selected {
     box-shadow:
       0 0 10px rgba(255, 0, 0, 0.5),

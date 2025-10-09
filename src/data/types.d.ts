@@ -1,3 +1,5 @@
+import type { Animals } from "./const";
+
 // 动物形状
 export interface AnimalShape {
   name: string;
@@ -21,4 +23,16 @@ export interface Pos {
   left: number;
   right: number;
   bottom: number;
+}
+
+// 位置样式
+export interface PosStyle {
+  top: string;
+  left: string;
+}
+
+// 动物放置信息
+export interface AnimalPos {
+  position: PosStyle;
+  animal: Animals;
 }
