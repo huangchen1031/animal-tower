@@ -10,8 +10,9 @@ import {
   getShapeWidthHeight,
 } from '@/utils';
 import type { AnimalPos, Level, Pos } from '@/data/types';
-import union from 'lodash-es/union';
 import intersection from 'lodash-es/intersection';
+import difference from 'lodash-es/difference';
+import { MessagePlugin } from 'tdesign-vue-next';
 
 const { star, animals, shape, size, color, index } = defineProps<
   Level<Animals> & { index: number }
@@ -31,7 +32,7 @@ const dropedAnimals = ref<AnimalPos[]>([]);
 
 watch(dropedShape, (newVal) => {
   if (newVal.length === shape.length) {
-    alert('恭喜过关！');
+    MessagePlugin.success('恭喜过关！');
   }
 });
 
@@ -41,10 +42,12 @@ const onDragOver = (event: DragEvent) => {
 
 // 放置事件
 const onDrop = (event: DragEvent) => {
+  const droped = JSON.parse(event.dataTransfer?.getData('droped') || '[]') || [];
+  const dropedShapeWithoutCurrent = difference(dropedShape.value, droped);
   // 判断是否放置成功， 重叠部分与原始长度相同，且与已放置部分无交集
   if (
     posOverlap.value.length === originCellsPosition.value.length &&
-    intersection(posOverlap.value, dropedShape.value).length === 0
+    intersection(posOverlap.value, dropedShapeWithoutCurrent).length === 0
   ) {
     // 获取放置位置
     const { offsetTop, offsetLeft } = gameBoxArea.value!;
@@ -52,14 +55,15 @@ const onDrop = (event: DragEvent) => {
 
     dropedAnimals.value = [
       {
-        position: getCellLeftTop(posOverlap.value[0]!, offsetTop, offsetLeft),
         animal,
+        position: getCellLeftTop(posOverlap.value[0]!, offsetTop, offsetLeft),
+        droped: [...posOverlap.value],
       },
       ...dropedAnimals.value.filter((item) => item.animal !== animal),
     ];
 
     // 记录已放置的单元格
-    dropedShape.value = union(dropedShape.value, posOverlap.value);
+    dropedShape.value = [...dropedShapeWithoutCurrent, ...posOverlap.value];
   }
   originCellsPosition.value = [];
 };
@@ -110,9 +114,10 @@ const posOverlap = computed(() => cellOverlap.value.map((i) => shape[i]!));
         <animal-box
           class="animal_wrap"
           v-for="item in dropedAnimals"
-          :key="item.animal"
+          :key="item.droped.join(',')"
           :style="item.position"
           v-bind="ANIMAL_SHAPE[item.animal]"
+          :droped="item.droped"
           @on-drag="onDrag"
         >
         </animal-box>
@@ -159,6 +164,7 @@ const posOverlap = computed(() => cellOverlap.value.map((i) => shape[i]!));
       position: absolute;
       border: 1px dashed;
       border-color: v-bind(color);
+      box-sizing: border-box;
     }
   }
 

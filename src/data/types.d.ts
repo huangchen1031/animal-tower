@@ -33,6 +33,7 @@ export interface PosStyle {
 
 // 动物放置信息
 export interface AnimalPos {
-  position: PosStyle;
   animal: Animals;
+  position: PosStyle;
+  droped: string[];
 }

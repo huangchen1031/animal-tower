@@ -54,7 +54,12 @@ let offsetX = 0;
 let offsetY = 0;
 
 // 拖拽事件
-export const useDraggable = (dragArea: Ref<HTMLDivElement, HTMLDivElement>, shape: string[], name: string) => {
+export const useDraggable = (
+  name: string,
+  dragArea: Ref<HTMLDivElement, HTMLDivElement>,
+  shape: string[],
+  droped: string[] = [],
+) => {
   // 是否拖拽中
   const isDragging = ref(false);
 
@@ -70,11 +75,12 @@ export const useDraggable = (dragArea: Ref<HTMLDivElement, HTMLDivElement>, shap
   const onDragStart = (event: DragEvent) => {
     event.dataTransfer!.effectAllowed = 'move';
     event.dataTransfer!.setData('animal', name);
+    event.dataTransfer!.setData('droped', JSON.stringify(droped));
     isDragging.value = true;
 
     const { clientX, clientY } = event;
     const { top, left } = dragArea.value.getBoundingClientRect();
-    
+
     offsetX = clientX - left;
     offsetY = clientY - top;
   };

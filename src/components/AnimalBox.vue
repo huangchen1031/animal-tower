@@ -8,7 +8,7 @@ import type { AnimalShape } from '@/data/types';
 const cssSize = ref(BASE + 'px');
 
 // 属性和事件
-const { name, shape, size } = defineProps<AnimalShape>();
+const { name, shape, size, droped } = defineProps<AnimalShape & { droped?: string[] }>();
 const emit = defineEmits(['onDrag']);
 
 // 整体形状
@@ -22,9 +22,10 @@ const dragArea = ref<HTMLDivElement>(document.createElement('div'));
 
 // 拖拽事件
 const { onDragStart, onDragEnd, onDrag, cellsPosition, isDragging } = useDraggable(
+  name,
   dragArea,
   shape,
-  name,
+  droped,
 );
 
 // 旋转参数
