@@ -70,10 +70,10 @@ export const getCellOverlap = (origin: Pos[], target: Pos[]): number[] => {
   target.forEach((pos, index) => {
     origin.forEach((cell) => {
       if (
-        cell.top > pos.top &&
-        cell.top < pos.bottom &&
-        cell.left > pos.left &&
-        cell.left < pos.right &&
+        cell.top > pos.top - 25 &&
+        cell.top < pos.top + 25 &&
+        cell.left > pos.left - 25 &&
+        cell.left < pos.left + 25 &&
         !res.includes(index)
       ) {
         res.push(index);
