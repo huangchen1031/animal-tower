@@ -1,4 +1,4 @@
-import type { Animals } from "./const";
+import type { Animals } from './const';
 
 // 动物形状
 export interface AnimalShape {
@@ -10,6 +10,7 @@ export interface AnimalShape {
 
 // 关卡
 export interface Level<T> {
+  level: number;
   star: number;
   animals: Array<T>;
   shape: string[];
