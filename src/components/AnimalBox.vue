@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue';
-import { BASE, getCellLeftTop, getShapeWidthHeight } from '@/utils';
+import { BASE, getCellLeftTop, getRotatedShape, getShapeWidthHeight } from '@/utils';
 import { useDraggable, useKeyDown } from './hooks';
 import type { AnimalShape } from '@/data/types';
 
@@ -11,25 +11,28 @@ const cssSize = ref(BASE + 'px');
 const { name, shape, size, droped } = defineProps<AnimalShape & { droped?: string[] }>();
 const emit = defineEmits(['onDrag']);
 
-// 整体形状
-const style = computed(() => ({
-  ...getShapeWidthHeight(size),
-  transform: `rotate(${rotate.value}deg) rotateX(${rotateX.value}deg)`,
-}));
-
 // 放置区域
 const dragArea = ref<HTMLDivElement>(document.createElement('div'));
 
+// 旋转参数
+const selected = ref(false);
+const { rotate, rotateX } = useKeyDown(selected);
+
+const showShape = computed(() => getRotatedShape(shape, rotate.value, Boolean(rotateX.value)));
+
 // 拖拽事件
-const { onDragStart, onDragEnd, onDrag, cellsPosition, isDragging } = useDraggable(
+const { onDragStart, onDragEnd, onDrag, cellsPosition } = useDraggable(
   name,
   dragArea,
-  shape,
+  showShape,
   droped,
 );
 
-// 旋转参数
-const { rotate, rotateX } = useKeyDown(isDragging);
+// 整体形状
+const style = computed(() => ({
+  ...getShapeWidthHeight(size, rotate.value),
+  // transform: `rotate(${rotate.value * 90}deg) rotateX(${rotateX.value * 180}deg)`,
+}));
 
 watch(cellsPosition, () => {
   emit('onDrag', cellsPosition.value);
@@ -40,14 +43,15 @@ watch(cellsPosition, () => {
   <div class="animal-box">
     <div
       ref="dragArea"
-      :class="['animal', name]"
+      :class="['animal', name, { selected }]"
       :style="style"
       draggable="true"
       @dragstart="onDragStart"
       @drag="onDrag"
       @dragend="onDragEnd"
+      @click="selected = !selected"
     >
-      <div v-for="cell in shape" class="cell" :key="cell" :style="getCellLeftTop(cell)"></div>
+      <div v-for="cell in showShape" class="cell" :key="cell" :style="getCellLeftTop(cell)"></div>
     </div>
   </div>
 </template>

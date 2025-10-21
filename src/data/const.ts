@@ -220,7 +220,7 @@ export const ANIMAL_SHAPE: Record<Animals, AnimalShape> = {
   },
   [Animals.长颈鹿]: {
     name: 'giraffe',
-    size: '8,4',
+    size: '4,8',
     shape: [
       '0,0','0,1',
       '1,0',

@@ -1,4 +1,5 @@
 import type { Animals } from './const';
+import type { CSSProperties } from 'vue';
 
 // 动物形状
 export interface AnimalShape {
@@ -27,7 +28,7 @@ export interface Pos {
 }
 
 // 位置样式
-export interface PosStyle {
+export interface PosStyle extends CSSProperties {
   top: string;
   left: string;
 }
@@ -37,4 +38,5 @@ export interface AnimalPos {
   animal: Animals;
   position: PosStyle;
   droped: string[];
+  shape: string[];
 }

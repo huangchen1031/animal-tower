@@ -6,17 +6,19 @@ import {
   BASE,
   getCellLeftTop,
   getCellOverlap,
+  getCellZeroPos,
   getShapeCellsPosition,
   getShapeWidthHeight,
 } from '@/utils';
 import type { AnimalPos, Level, Pos } from '@/data/types';
 import intersection from 'lodash-es/intersection';
 import difference from 'lodash-es/difference';
-import { MessagePlugin } from 'tdesign-vue-next';
 
 const { star, animals, shape, size, color, index } = defineProps<
   Level<Animals> & { index: number }
 >();
+
+const emit = defineEmits(['onSuccess']);
 
 // 单元格基础大小
 const cssSize = ref(BASE + 'px');
@@ -30,9 +32,21 @@ const gameBoxArea = ref<HTMLDivElement>();
 const dropedShape = ref<string[]>([]);
 const dropedAnimals = ref<AnimalPos[]>([]);
 
+// 重置关卡
+const onReset = () => {
+  dropedShape.value = [];
+  dropedAnimals.value = [];
+};
+watch(
+  () => index,
+  () => {
+    onReset();
+  },
+);
+
 watch(dropedShape, (newVal) => {
   if (newVal.length === shape.length) {
-    MessagePlugin.success('恭喜过关！');
+    emit('onSuccess');
   }
 });
 
@@ -52,12 +66,18 @@ const onDrop = (event: DragEvent) => {
     // 获取放置位置
     const { offsetTop, offsetLeft } = gameBoxArea.value!;
     const animal = event.dataTransfer?.getData('animal') as Animals;
+    const shape = JSON.parse(event.dataTransfer?.getData('shape') || '[]') || [];
 
     dropedAnimals.value = [
       {
         animal,
-        position: getCellLeftTop(posOverlap.value[0]!, offsetTop, offsetLeft),
+        position: getCellLeftTop(
+          getCellZeroPos(posOverlap.value[0]!, shape[0]!),
+          offsetTop,
+          offsetLeft,
+        ),
         droped: [...posOverlap.value],
+        shape,
       },
       ...dropedAnimals.value.filter((item) => item.animal !== animal),
     ];
@@ -117,6 +137,7 @@ const posOverlap = computed(() => cellOverlap.value.map((i) => shape[i]!));
           :key="item.droped.join(',')"
           :style="item.position"
           v-bind="ANIMAL_SHAPE[item.animal]"
+          :shape="item.shape"
           :droped="item.droped"
           @on-drag="onDrag"
         >

@@ -1,5 +1,5 @@
 import { getShapeCellsPosition } from '@/utils';
-import { computed, onMounted, onUnmounted, ref, type Ref } from 'vue';
+import { computed, onMounted, onUnmounted, ref, type ComputedRef, type Ref } from 'vue';
 
 // 键盘事件
 export const useKeyDown = (selected: Ref<boolean, boolean>) => {
@@ -15,19 +15,19 @@ export const useKeyDown = (selected: Ref<boolean, boolean>) => {
     switch (event.key) {
       case 'ArrowUp':
         event.preventDefault();
-        rotateX.value -= 180;
+        rotateX.value = (rotateX.value + 1) % 2;
         break;
       case 'ArrowDown':
         event.preventDefault();
-        rotateX.value += 180;
+        rotateX.value = (rotateX.value + 1) % 2;
         break;
       case 'ArrowLeft':
         event.preventDefault();
-        rotate.value -= 90;
+        rotate.value = (rotate.value + 3) % 4;
         break;
       case 'ArrowRight':
         event.preventDefault();
-        rotate.value += 90;
+        rotate.value = (rotate.value + 1) % 4;
         break;
       default:
         return; // 非方向键不处理
@@ -57,7 +57,7 @@ let offsetY = 0;
 export const useDraggable = (
   name: string,
   dragArea: Ref<HTMLDivElement, HTMLDivElement>,
-  shape: string[],
+  shape: ComputedRef<string[]>,
   droped: string[] = [],
 ) => {
   // 是否拖拽中
@@ -69,12 +69,13 @@ export const useDraggable = (
 
   // 坐标组
   const cellsPosition = computed(() => {
-    return getShapeCellsPosition(top.value, left.value, shape);
+    return getShapeCellsPosition(top.value, left.value, shape.value);
   });
 
   const onDragStart = (event: DragEvent) => {
     event.dataTransfer!.effectAllowed = 'move';
     event.dataTransfer!.setData('animal', name);
+    event.dataTransfer!.setData('shape', JSON.stringify(shape.value));
     event.dataTransfer!.setData('droped', JSON.stringify(droped));
     isDragging.value = true;
 
