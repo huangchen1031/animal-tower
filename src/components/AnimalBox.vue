@@ -2,13 +2,21 @@
 import { ref, computed, watch } from 'vue';
 import { BASE, getCellLeftTop, getRotatedShape, getShapeWidthHeight } from '@/utils';
 import { useDraggable, useKeyDown } from './hooks';
-import type { AnimalShape } from '@/data/types';
+import type { AnimalPos, AnimalShape } from '@/data/types';
 
 // 单元格基础大小
 const cssSize = ref(BASE + 'px');
 
 // 属性和事件
-const { name, shape, size, droped } = defineProps<AnimalShape & { droped?: string[] }>();
+const {
+  name,
+  shape,
+  size,
+  droped,
+  image,
+  rotate: defaultRotate,
+  rotateX: defaultRotateX,
+} = defineProps<AnimalShape & Partial<AnimalPos>>();
 const emit = defineEmits(['onDrag']);
 
 // 放置区域
@@ -16,7 +24,11 @@ const dragArea = ref<HTMLDivElement>(document.createElement('div'));
 
 // 旋转参数
 const selected = ref(false);
-const { rotate, rotateX } = useKeyDown(selected);
+const onSwitchSelected = () => {
+  if (droped?.length) return;
+  selected.value = !selected.value;
+};
+const { rotate, rotateX } = useKeyDown(selected, defaultRotate, defaultRotateX);
 
 const showShape = computed(() => getRotatedShape(shape, rotate.value, Boolean(rotateX.value)));
 
@@ -26,13 +38,39 @@ const { onDragStart, onDragEnd, onDrag, cellsPosition } = useDraggable(
   dragArea,
   showShape,
   droped,
+  rotate,
+  rotateX,
 );
 
 // 整体形状
 const style = computed(() => ({
   ...getShapeWidthHeight(size, rotate.value),
-  // transform: `rotate(${rotate.value * 90}deg) rotateX(${rotateX.value * 180}deg)`,
 }));
+
+// 背景图片样式（只有背景图片旋转）
+const backgroundStyle = computed(() => {
+  if (!image) return {};
+
+  const originalSize = getShapeWidthHeight(size, 0);
+  const currentSize = getShapeWidthHeight(size, rotate.value);
+
+  // 计算原始尺寸和当前尺寸的数值
+  const originalW = parseFloat(originalSize.width);
+  const originalH = parseFloat(originalSize.height);
+  const currentW = parseFloat(currentSize.width);
+  const currentH = parseFloat(currentSize.height);
+
+  // 计算背景层应该移动的距离，使旋转后的背景与dragArea左上角对齐
+  const translateX = (currentW - originalW) / 2;
+  const translateY = (currentH - originalH) / 2;
+
+  return {
+    backgroundImage: `url(${image})`,
+    transform: `translate(${translateX}px, ${translateY}px) rotate(${rotate.value * 90}deg) rotateX(${rotateX.value * 180}deg)`,
+    transformOrigin: `${originalW / 2}px ${originalH / 2}px`,
+    ...originalSize,
+  };
+});
 
 watch(cellsPosition, () => {
   emit('onDrag', cellsPosition.value);
@@ -49,8 +87,11 @@ watch(cellsPosition, () => {
       @dragstart="onDragStart"
       @drag="onDrag"
       @dragend="onDragEnd"
-      @click="selected = !selected"
+      @click="onSwitchSelected"
     >
+      <!-- 背景图片层，只有背景图片会旋转 -->
+      <div v-if="image" class="background-layer" :style="backgroundStyle"></div>
+      <!-- 形状层，不旋转 -->
       <div v-for="cell in showShape" class="cell" :key="cell" :style="getCellLeftTop(cell)"></div>
     </div>
   </div>
@@ -71,11 +112,23 @@ watch(cellsPosition, () => {
     display: flex;
   }
 
+  .background-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 0; // 背景层在最底层
+    transform-origin: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+
   .cell {
     width: v-bind(cssSize);
     height: v-bind(cssSize);
-    background: #666;
+    // background: #666;
     position: absolute;
+    z-index: 1; // 形状层在背景层上方
   }
 }
 </style>

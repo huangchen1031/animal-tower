@@ -67,6 +67,8 @@ const onDrop = (event: DragEvent) => {
     const { offsetTop, offsetLeft } = gameBoxArea.value!;
     const animal = event.dataTransfer?.getData('animal') as Animals;
     const shape = JSON.parse(event.dataTransfer?.getData('shape') || '[]') || [];
+    const rotate = Number(event.dataTransfer?.getData('rotate') || 0);
+    const rotateX = Number(event.dataTransfer?.getData('rotateX') || 0);
 
     dropedAnimals.value = [
       {
@@ -78,6 +80,8 @@ const onDrop = (event: DragEvent) => {
         ),
         droped: [...posOverlap.value],
         shape,
+        rotate,
+        rotateX,
       },
       ...dropedAnimals.value.filter((item) => item.animal !== animal),
     ];
@@ -139,6 +143,8 @@ const posOverlap = computed(() => cellOverlap.value.map((i) => shape[i]!));
           v-bind="ANIMAL_SHAPE[item.animal]"
           :shape="item.shape"
           :droped="item.droped"
+          :rotate="item.rotate"
+          :rotateX="item.rotateX"
           @on-drag="onDrag"
         >
         </animal-box>

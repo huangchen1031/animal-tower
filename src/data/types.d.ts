@@ -39,4 +39,6 @@ export interface AnimalPos {
   position: PosStyle;
   droped: string[];
   shape: string[];
+  rotate: number;
+  rotateX: number;
 }

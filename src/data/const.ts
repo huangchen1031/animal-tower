@@ -1,4 +1,19 @@
 import type { AnimalShape, Level } from './types';
+import koalaImg from '@/assets/images/koala.png';
+import rabbitImg from '@/assets/images/rabbit.png';
+import hedgehogImg from '@/assets/images/hedgehog.png';
+import turtleImg from '@/assets/images/turtle.png';
+import parrotImg from '@/assets/images/parrot.png';
+import snakeImg from '@/assets/images/snake.png';
+import gorillaImg from '@/assets/images/gorilla.png';
+import dogImg from '@/assets/images/dog.png';
+import donkeyImg from '@/assets/images/donkey.png';
+import polarBearImg from '@/assets/images/polar_bear.png';
+import tigerImg from '@/assets/images/tiger.png';
+import camelImg from '@/assets/images/camel.png';
+import elephantImg from '@/assets/images/elephant.png';
+import dinosaursImg from '@/assets/images/dinosaurs.png';
+import giraffeImg from '@/assets/images/giraffe.png';
 
 // 动物枚举
 export enum Animals {
@@ -88,11 +103,11 @@ export const LEVEL_LIST: Level<Animals>[] = [
 export const ANIMAL_SHAPE: Record<Animals, AnimalShape> = {
   [Animals.考拉]: {
     name: 'koala',
-    size: '1,2',
+    size: '2,1',
     shape: [
-      '0,0',
-      '1,0',
+      '0,0','0,1',
     ],
+    image: koalaImg,
   },
   [Animals.兔子]: {
     name: 'rabbit',
@@ -101,6 +116,7 @@ export const ANIMAL_SHAPE: Record<Animals, AnimalShape> = {
             '0,1',
       '1,0','1,1',
     ],
+    image: rabbitImg,
   },
   [Animals.刺猬]: {
     name: 'hedgehog',
@@ -109,6 +125,7 @@ export const ANIMAL_SHAPE: Record<Animals, AnimalShape> = {
       '0,0','0,1',
       '1,0','1,1',
     ],
+    image: hedgehogImg,
   },
   [Animals.乌龟]: {
     name: 'turtle',
@@ -117,6 +134,7 @@ export const ANIMAL_SHAPE: Record<Animals, AnimalShape> = {
             '0,1','0,2',
       '1,0','1,1','1,2',
     ],
+    image: turtleImg,
   },
   [Animals.鹦鹉]: {
     name: 'parrot',
@@ -127,6 +145,7 @@ export const ANIMAL_SHAPE: Record<Animals, AnimalShape> = {
             '2,1',
             '3,1',
     ],
+    image: parrotImg,
   },
   [Animals.蛇]: {
     name: 'snake',
@@ -136,6 +155,7 @@ export const ANIMAL_SHAPE: Record<Animals, AnimalShape> = {
       '1,0','1,1','1,2',
       '2,0','2,1','2,2',
     ],
+    image: snakeImg,
   },
   [Animals.大猩猩]: {
     name: 'gorilla',
@@ -145,6 +165,7 @@ export const ANIMAL_SHAPE: Record<Animals, AnimalShape> = {
       '1,0','1,1','1,2',
       '2,0',      '2,2',
     ],
+    image: gorillaImg,
   },
   [Animals.狗]: {
     name: 'dog',
@@ -154,6 +175,7 @@ export const ANIMAL_SHAPE: Record<Animals, AnimalShape> = {
             '1,1','1,2','1,3','1,4',
             '2,1',            '2,4',
     ],
+    image: dogImg,
   },
   [Animals.驴]: {
     name: 'donkey',
@@ -164,6 +186,7 @@ export const ANIMAL_SHAPE: Record<Animals, AnimalShape> = {
             '2,1',            '2,4',
             '3,1',            '3,4',
     ],
+    image: donkeyImg,
   },
   [Animals.北极熊]: {
     name: 'polar bear',
@@ -173,6 +196,7 @@ export const ANIMAL_SHAPE: Record<Animals, AnimalShape> = {
       '1,0','1,1','1,2',
       '2,0',      '2,2',
     ],
+    image: polarBearImg,
   },
   [Animals.老虎]: {
     name: 'tiger',
@@ -182,6 +206,7 @@ export const ANIMAL_SHAPE: Record<Animals, AnimalShape> = {
       '1,0','1,1','1,2','1,3','1,4','1,5',
             '2,1',            '2,4',
     ],
+    image: tigerImg,
   },
   [Animals.骆驼]: {
     name: 'camel',
@@ -193,6 +218,7 @@ export const ANIMAL_SHAPE: Record<Animals, AnimalShape> = {
                   '3,2',      '3,4',
                   '4,2',      '4,4',
     ],
+    image: camelImg,
   },
   [Animals.大象]: {
     name: 'elephant',
@@ -204,6 +230,7 @@ export const ANIMAL_SHAPE: Record<Animals, AnimalShape> = {
       '3,0',      '3,2',            '3,5',
       '4,0',      '4,2',            '4,5',
     ],
+    image: elephantImg
   },
   [Animals.恐龙]: {
     name: 'dinosaurs',
@@ -217,6 +244,7 @@ export const ANIMAL_SHAPE: Record<Animals, AnimalShape> = {
       '5,0','5,1','5,2','5,3','5,4','5,5',
       '6,0',            '6,3',
     ],
+    image: dinosaursImg
   },
   [Animals.长颈鹿]: {
     name: 'giraffe',
@@ -231,5 +259,6 @@ export const ANIMAL_SHAPE: Record<Animals, AnimalShape> = {
       '6,0',      '6,2',
       '7,0',      '7,2',
     ],
+    image: giraffeImg,
   },
 };

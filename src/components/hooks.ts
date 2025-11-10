@@ -2,10 +2,14 @@ import { getShapeCellsPosition } from '@/utils';
 import { computed, onMounted, onUnmounted, ref, type ComputedRef, type Ref } from 'vue';
 
 // 键盘事件
-export const useKeyDown = (selected: Ref<boolean, boolean>) => {
+export const useKeyDown = (
+  selected: Ref<boolean, boolean>,
+  defaultRotate: number = 0,
+  defaultRotateX: number = 0,
+) => {
   // 变形参数
-  const rotate = ref(0);
-  const rotateX = ref(0);
+  const rotate = ref(defaultRotate);
+  const rotateX = ref(defaultRotateX);
 
   // 键盘事件处理函数
   const handleKeyDown = (event: KeyboardEvent) => {
@@ -59,6 +63,8 @@ export const useDraggable = (
   dragArea: Ref<HTMLDivElement, HTMLDivElement>,
   shape: ComputedRef<string[]>,
   droped: string[] = [],
+  rotate: Ref<number, number>,
+  rotateX: Ref<number, number>,
 ) => {
   // 是否拖拽中
   const isDragging = ref(false);
@@ -76,6 +82,8 @@ export const useDraggable = (
     event.dataTransfer!.effectAllowed = 'move';
     event.dataTransfer!.setData('animal', name);
     event.dataTransfer!.setData('shape', JSON.stringify(shape.value));
+    event.dataTransfer!.setData('rotate', JSON.stringify(rotate.value));
+    event.dataTransfer!.setData('rotateX', JSON.stringify(rotateX.value));
     event.dataTransfer!.setData('droped', JSON.stringify(droped));
     isDragging.value = true;
 
