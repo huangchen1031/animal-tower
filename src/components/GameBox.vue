@@ -90,6 +90,7 @@ const onDrop = (event: DragEvent) => {
     dropedShape.value = [...dropedShapeWithoutCurrent, ...posOverlap.value];
   }
   originCellsPosition.value = [];
+  selectedAnimal.value = '';
 };
 
 // 坐标组
@@ -110,6 +111,9 @@ const cellOverlap = computed(() =>
 );
 
 const posOverlap = computed(() => cellOverlap.value.map((i) => shape[i]!));
+
+// 选中动物
+const selectedAnimal = ref('');
 </script>
 
 <template>
@@ -141,7 +145,6 @@ const posOverlap = computed(() => cellOverlap.value.map((i) => shape[i]!));
           :key="item.droped.join(',')"
           :style="item.position"
           v-bind="ANIMAL_SHAPE[item.animal]"
-          :shape="item.shape"
           :droped="item.droped"
           :rotate="item.rotate"
           :rotateX="item.rotateX"
@@ -161,6 +164,8 @@ const posOverlap = computed(() => cellOverlap.value.map((i) => shape[i]!));
             visibility: dropedAnimals.some((item) => item.animal === animal) ? 'hidden' : 'visible',
           }"
           v-bind="ANIMAL_SHAPE[animal]"
+          :selected="selectedAnimal === animal"
+          @click.native="selectedAnimal = selectedAnimal === animal ? '' : animal"
           @on-drag="onDrag"
         />
       </div>

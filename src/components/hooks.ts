@@ -82,8 +82,8 @@ export const useDraggable = (
     event.dataTransfer!.effectAllowed = 'move';
     event.dataTransfer!.setData('animal', name);
     event.dataTransfer!.setData('shape', JSON.stringify(shape.value));
-    event.dataTransfer!.setData('rotate', JSON.stringify(rotate.value));
-    event.dataTransfer!.setData('rotateX', JSON.stringify(rotateX.value));
+    event.dataTransfer!.setData('rotate', String(rotate.value));
+    event.dataTransfer!.setData('rotateX', String(rotateX.value));
     event.dataTransfer!.setData('droped', JSON.stringify(droped));
     isDragging.value = true;
 

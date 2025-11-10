@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, toRef } from 'vue';
 import { BASE, getCellLeftTop, getRotatedShape, getShapeWidthHeight } from '@/utils';
 import { useDraggable, useKeyDown } from './hooks';
 import type { AnimalPos, AnimalShape } from '@/data/types';
@@ -8,26 +8,15 @@ import type { AnimalPos, AnimalShape } from '@/data/types';
 const cssSize = ref(BASE + 'px');
 
 // 属性和事件
-const {
-  name,
-  shape,
-  size,
-  droped,
-  image,
-  rotate: defaultRotate,
-  rotateX: defaultRotateX,
-} = defineProps<AnimalShape & Partial<AnimalPos>>();
+const props = defineProps<AnimalShape & Partial<AnimalPos> & { selected?: boolean }>();
+const { name, shape, size, droped, image, rotate: defaultRotate, rotateX: defaultRotateX } = props;
 const emit = defineEmits(['onDrag']);
 
 // 放置区域
 const dragArea = ref<HTMLDivElement>(document.createElement('div'));
 
 // 旋转参数
-const selected = ref(false);
-const onSwitchSelected = () => {
-  if (droped?.length) return;
-  selected.value = !selected.value;
-};
+const selected = toRef(props, 'selected');
 const { rotate, rotateX } = useKeyDown(selected, defaultRotate, defaultRotateX);
 
 const showShape = computed(() => getRotatedShape(shape, rotate.value, Boolean(rotateX.value)));
@@ -87,7 +76,6 @@ watch(cellsPosition, () => {
       @dragstart="onDragStart"
       @drag="onDrag"
       @dragend="onDragEnd"
-      @click="onSwitchSelected"
     >
       <!-- 背景图片层，只有背景图片会旋转 -->
       <div v-if="image" class="background-layer" :style="backgroundStyle"></div>
